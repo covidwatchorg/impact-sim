@@ -20,7 +20,7 @@
 #' delayfn <- dist_setup(delay_shape, delay_scale)
 #' outbreak_setup(num.initial.cases = 5,incfn,delayfn,k=1.95,prop.asym=0)
 #'}
-outbreak_setup <- function(num.initial.cases, incfn, delayfn, k, prop.asym) {
+outbreak_setup <- function(num.initial.cases, incfn, delayfn, k, prop.asym, fracApp) {
   # Set up table of initial cases
   inc_samples <- incfn(num.initial.cases)
 
@@ -30,7 +30,9 @@ outbreak_setup <- function(num.initial.cases, incfn, delayfn, k, prop.asym) {
                           infector = 0,
                           missed = TRUE,
                           onset = inc_samples,
-                          new_cases = NA)
+                          new_cases = NA,
+                          group = sample(c(1,2), size = num.initial.cases, prob = c(fracApp, 1-fracApp), replace = TRUE),
+                          infector_group = 2)
 
   # set isolation time for cluster to minimum time of onset of symptoms + draw from delay distribution
   case_data <- case_data[, isolated_time := onset + delayfn(1)

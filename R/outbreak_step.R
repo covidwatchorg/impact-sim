@@ -32,7 +32,9 @@
 #' case_data <- outbreak_step(case_data,1,0.16,0,2.5,0,incfn,delayfn,0,1.95,FALSE)
 #'}
 outbreak_step <- function(case_data = NULL, disp.iso = NULL, disp.com = NULL, r0isolated = NULL, r0community = NULL,
-                          prop.asym = NULL, incfn = NULL, delayfn = NULL, prop.ascertain = NULL, k = NULL, quarantine = NULL) {
+                          prop.asym = NULL, incfn = NULL, delayfn = NULL, prop.ascertain = NULL, k = NULL, quarantine = NULL, flow = NULL, traceAcc = NULL) {
+
+
 
   # A vectorised version of isTRUE
   vect_isTRUE <- function(x) {
@@ -99,15 +101,35 @@ outbreak_step <- function(case_data = NULL, disp.iso = NULL, disp.com = NULL, r0
                                        function(x, y) {
                                          rep(x, y)
                                          })),
+    #sample to pick which groups new people are in
+    infector_group = unlist(purrr::map2(new_case_data$group, new_case_data$new_cases,
+                                        function(x, y) {
+                                          rep(x, y)
+                                        })),
+
+    group = unlist(purrr::map2(new_case_data$group, new_case_data$new_cases,
+                                        function(x, y) {
+                                          sample(seq_len(nrow(flow)), y, prob=flow[x,], replace = TRUE)
+                                        })),
+
     # draws a sample to see if this person is asymptomatic
     asym = purrr::rbernoulli(n = total_new_cases, p = prop.asym),
     # draws a sample to see if this person is traced
+    # todo: modify probability based on groups
     missed = purrr::rbernoulli(n = total_new_cases, p = 1 - prop.ascertain),
     # sample from the incubation period for each new person
     incubfn_sample = inc_samples,
     isolated = FALSE,
     new_cases = NA
   )
+
+  prob_samples[, prob_trace := traceAcc[cbind(infector_group, group)]]
+
+  prob_samples[, missed := unlist(purrr::map(prob_samples$prob_trace,
+                                              function(x) {
+                                                purrr::rbernoulli(n = 1, p = 1-x)
+                                              })),]
+
 
 
   prob_samples <- prob_samples[exposure < infector_iso_time][, # filter out new cases prevented by isolation
@@ -131,7 +153,7 @@ outbreak_step <- function(case_data = NULL, disp.iso = NULL, disp.com = NULL, r0
 
 
   # Chop out unneeded sample columns
-  prob_samples[, c("incubfn_sample", "infector_iso_time", "infector_asym") := NULL]
+  prob_samples[, c("incubfn_sample", "infector_iso_time", "infector_asym", "prob_trace") := NULL]
   # Set new case ids for new people
   prob_samples$caseid <- (nrow(case_data) + 1):(nrow(case_data) + nrow(prob_samples))
 

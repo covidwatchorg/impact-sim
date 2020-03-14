@@ -21,23 +21,26 @@ trace = [0.9 , 0.5;
 
 
 ```{r}
-library(ringbp)
+#library(ringbp)
 library(ggplot2)
+library(data.table)
 
 cap_cases = 50000
 
 
-fracApp = 0.2
-fracContactsWithApp = 0.8 #(fracApp - homogenous, 1.0 - separated)
+fracApp = 0.8
+mixing = 1.0
+#fracContactsWithApp = 0.8 #(fracApp - homogenous, 1.0 - separated)
 
+# percent of interaction a person in group i has with group j = flow[i,j]
+#flow = rbind(c(fracContactsWithApp , 1 - fracContactsWithApp), 
+#             c((1 - fracContactsWithApp)*fracApp/(1-fracApp), 1 - (1 - fracContactsWithApp)*fracApp/(1-fracApp)))
 
-flow = rbind(c(fracContactsWithApp ,                          1 - fracContactsWithApp), c((1 - fracContactsWithApp)*fracApp/(1-fracApp), 1 - (1 - fracContactsWithApp)*fracApp/(1-fracApp)))
+#appAcc = 0.9
+#genAcc = 0.5
+#traceAcc = rbind(c(appAcc, genAcc), c(genAcc,genAcc)) # probability of tracing transmission from person in group i to person in group j = trace[i,j]
 
-appAcc = 0.9
-genAcc = 0.5
-trace = rbind(c(appAcc, genAcc), c(genAcc,genAcc))
-
-res <- ringbp::scenario_sim(n.sim = 10,
+res <- scenario_sim(n.sim = 10,
 num.initial.cases = 10,
 cap_max_days = 45,
 cap_cases = cap_cases,
@@ -50,7 +53,9 @@ delay_shape = 1.651524,
 delay_scale = 4.287786,
 prop.asym = 0,
 prop.ascertain = 0.8,
-quarantine = TRUE)
+quarantine = TRUE,
+fracApp = fracApp,
+mixing = mixing)
   
   
                     # n.sim = 8, num.initial.cases = 30,prop.asym=0,

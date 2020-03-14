@@ -37,7 +37,7 @@
 scenario_sim <- function(n.sim = NULL, prop.ascertain = NULL, cap_max_days = NULL, cap_cases = NULL,
                          r0isolated = NULL, r0community = NULL, disp.iso = NULL, disp.com = NULL, k = NULL,
                          delay_shape = NULL, delay_scale = NULL, num.initial.cases = NULL, prop.asym = NULL,
-                         quarantine = NULL) {
+                         quarantine = NULL, fracApp = NULL, mixing = NULL) {
 
   # Run n.sim number of model runs and put them all together in a big data.frame
   res <- purrr::map(.x = 1:n.sim, ~ outbreak_model(num.initial.cases = num.initial.cases,
@@ -52,7 +52,9 @@ scenario_sim <- function(n.sim = NULL, prop.ascertain = NULL, cap_max_days = NUL
                                              delay_scale = delay_scale,
                                              k = k,
                                              prop.asym = prop.asym,
-                                             quarantine = quarantine))
+                                             quarantine = quarantine,
+                                             fracApp = fracApp,
+                                             mixing = mixing))
 
 
   # bind output together and add simulation index
