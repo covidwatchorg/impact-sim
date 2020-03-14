@@ -112,7 +112,7 @@ outbreak_model <- function(num.initial.cases = NULL, prop.ascertain = NULL,
 
   # Prepare output, group into weeks
   weekly_cases <- case_data[, week := floor(onset / 7)
-                            ][, .(weekly_cases = .N), by = week
+                            ][, .(weekly_cases = .N, frac1 = sum(group == 1)/.N), by = list(week)
                               ]
   # maximum outbreak week
   max_week <- floor(cap_max_days / 7)
@@ -123,7 +123,7 @@ outbreak_model <- function(num.initial.cases = NULL, prop.ascertain = NULL,
   if (length(missing_weeks > 0)) {
     weekly_cases <- data.table::rbindlist(list(weekly_cases,
                                                data.table(week = missing_weeks,
-                                                          weekly_cases = 0)))
+                                                          weekly_cases = 0, frac1 = NA)))
   }
   # order and sum up
   weekly_cases <- weekly_cases[order(week)

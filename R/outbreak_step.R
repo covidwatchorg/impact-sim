@@ -116,7 +116,7 @@ outbreak_step <- function(case_data = NULL, disp.iso = NULL, disp.com = NULL, r0
     asym = purrr::rbernoulli(n = total_new_cases, p = prop.asym),
     # draws a sample to see if this person is traced
     # todo: modify probability based on groups
-    missed = purrr::rbernoulli(n = total_new_cases, p = 1 - prop.ascertain),
+    #missed = purrr::rbernoulli(n = total_new_cases, p = 1 - prop.ascertain),
     # sample from the incubation period for each new person
     incubfn_sample = inc_samples,
     isolated = FALSE,

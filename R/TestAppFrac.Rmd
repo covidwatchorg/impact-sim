@@ -24,23 +24,23 @@ trace = [0.9 , 0.5;
 #library(ringbp)
 library(ggplot2)
 library(data.table)
+library(plyr)
 
 cap_cases = 50000
 
 
-fracApp = 0.8
-mixing = 1.0
-#fracContactsWithApp = 0.8 #(fracApp - homogenous, 1.0 - separated)
 
-# percent of interaction a person in group i has with group j = flow[i,j]
-#flow = rbind(c(fracContactsWithApp , 1 - fracContactsWithApp), 
-#             c((1 - fracContactsWithApp)*fracApp/(1-fracApp), 1 - (1 - fracContactsWithApp)*fracApp/(1-fracApp)))
 
-#appAcc = 0.9
-#genAcc = 0.5
-#traceAcc = rbind(c(appAcc, genAcc), c(genAcc,genAcc)) # probability of tracing transmission from person in group i to person in group j = trace[i,j]
+n.sim = 60
 
-res <- scenario_sim(n.sim = 10,
+
+fracApp = c(0.01, 0.2, 0.4, 0.6, 0.8, 0.99)
+mixing = seq(0.0,1.0, length.out = 6)
+
+params = data.table(expand.grid(fracApp = fracApp, mixing = mixing))
+
+sweepRes = mdply(params, function(fracApp, mixing){
+  res <- scenario_sim(n.sim = n.sim,
 num.initial.cases = 10,
 cap_max_days = 45,
 cap_cases = cap_cases,
@@ -56,19 +56,24 @@ prop.ascertain = 0.8,
 quarantine = TRUE,
 fracApp = fracApp,
 mixing = mixing)
+  res[,fracApp := fracApp]
+  res[, mixing:=mixing]
+})
+
   
   
-                    # n.sim = 8, num.initial.cases = 30,prop.asym=0,
-                    #  prop.ascertain = 0.01, cap_cases = 4500, cap_max_days = 60,
-                    #  r0isolated = 0.0, r0community = 2.5, disp.com = 0.16, disp.iso = 1, delay_shape = 1.651524,
-                    #  delay_scale = 4.287786,k = 0, quarantine = FALSE)
 
 # Plot of weekly cases
-ggplot2::ggplot(data=res, ggplot2::aes(x=week, y=weekly_cases, col = as.factor(sim))) +
-  ggplot2::geom_line(show.legend = FALSE, alpha=0.7) +
-  ggplot2::scale_y_continuous()
+#ggplot2::ggplot(data=res, ggplot2::aes(x=week, y=weekly_cases, col = as.factor(sim))) +
+#  ggplot2::geom_line(show.legend = FALSE, alpha=0.7) +
+#  ggplot2::scale_y_continuous()
 
-ringbp::extinct_prob(res,cap_cases = cap_cases)
-res[,max(cumulative), by = sim]
+#ringbp::extinct_prob(res,cap_cases = cap_cases)
+#res[, sum(frac1*weekly_cases , na.rm = TRUE)]/n.sim/fracApp
+
+plotDt = sweepRes[, list(meanAppInfected = sum(frac1*weekly_cases/fracApp/n.sim , na.rm = TRUE)), by=list(fracApp, mixing)]
+
+
+ggplot(plotDt, aes(x = fracApp, y = mixing, z = meanAppInfected)) + stat_summary_2d()
 ```
 
