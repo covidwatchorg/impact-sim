@@ -1,3 +1,6 @@
+Repo forked from: https://github.com/cmmid/ringbp
+
+
 # Feasibility of controlling 2019-nCoV outbreaks by isolation of cases and contacts
 
 ## Abstract
