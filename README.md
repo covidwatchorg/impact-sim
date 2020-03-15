@@ -1,6 +1,9 @@
 Repo forked from: https://github.com/cmmid/ringbp
 
 
+The original model has been modified to support two sub-populations with different contact tracing accuracy.
+
+
 # Feasibility of controlling 2019-nCoV outbreaks by isolation of cases and contacts
 
 ## Abstract
