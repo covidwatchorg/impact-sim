@@ -34,10 +34,11 @@
 #' prop.ascertain = 0)
 #' #' }
 #'
+
 scenario_sim <- function(n.sim = NULL, prop.ascertain = NULL, cap_max_days = NULL, cap_cases = NULL,
                          r0isolated = NULL, r0community = NULL, disp.iso = NULL, disp.com = NULL, k = NULL,
                          delay_shape = NULL, delay_scale = NULL, num.initial.cases = NULL, prop.asym = NULL,
-                         quarantine = NULL, fracApp = NULL, mixing = NULL) {
+                         quarantine = NULL, fracApp = NULL, mixing = NULL, appAcc = NULL, genAcc = NULL) {
 
   # Run n.sim number of model runs and put them all together in a big data.frame
   res <- purrr::map(.x = 1:n.sim,
@@ -56,18 +57,13 @@ scenario_sim <- function(n.sim = NULL, prop.ascertain = NULL, cap_max_days = NUL
                    prop.asym = prop.asym,
                    quarantine = quarantine,
                    fracApp = fracApp,
-                   mixing = mixing)
+                   mixing = mixing,
+                   appAcc = appAcc,
+                   genAcc = genAcc)
                   res[,sim:=x]
                   return(res)
   })
 
-
-
-
-
-  # bind output together and add simulation index
-
   res <- data.table::rbindlist(res)
-  #res[, sim := rep(1:n.sim, rep(floor(cap_max_days / 7) + 1, n.sim)) ]
   return(res)
 }

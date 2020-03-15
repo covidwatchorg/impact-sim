@@ -4,24 +4,9 @@ output: html_notebook
 ---
 
 
-Start with percent population app users, then incorporate heterogeneity
-fracApp = 0.2
-fracContactsWithApp = 0.8 (fracApp - homogenous, 1.0 - separated)
-P(app user infects other | app user infects someone) = 1 - fracContactsWithApp
-P(other infects app user | other infects someone) = (1 - fracContactsWithApp)*fracApp/(1-fracApp)
-
-Make rate matrix. Group 1 app, group 2 no app 
-
-flow =  [fracContactsWithApp ,                          1 - fracContactsWithApp;
-(1 - fracContactsWithApp)*fracApp/(1-fracApp), 1 - (1 - fracContactsWithApp)*fracApp/(1-fracApp)
-]
-
-trace = [0.9 , 0.5;
-        0.5,  0.5]
-
 
 ```{r}
-#library(ringbp)
+library(ringbp)
 library(ggplot2)
 library(data.table)
 library(plyr)
@@ -29,13 +14,14 @@ library(plyr)
 cap_cases = 50000
 
 
+n.sim = 20
+
+fracApp = c(0.01,0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9, 0.99) # fraction of the population using the app
+mixing = seq(0.0,1.0, length.out = 5) # how well mixed the app group is with the non-app group (0 = separate, 1 = homegenous)
 
 
-n.sim = 60
-
-
-fracApp = c(0.01, 0.2, 0.4, 0.6, 0.8, 0.99)
-mixing = seq(0.0,1.0, length.out = 6)
+appAcc = 0.9 # contact tracing accuracy if both people have app
+genAcc = 0.5 # contact tracing accuracy if at least one doesn't have app
 
 params = data.table(expand.grid(fracApp = fracApp, mixing = mixing))
 
@@ -55,25 +41,22 @@ prop.asym = 0,
 prop.ascertain = 0.8,
 quarantine = TRUE,
 fracApp = fracApp,
-mixing = mixing)
+mixing = mixing,
+appAcc = appAcc,
+genAcc = genAcc)
   res[,fracApp := fracApp]
   res[, mixing:=mixing]
 })
 
   
   
-
-# Plot of weekly cases
-#ggplot2::ggplot(data=res, ggplot2::aes(x=week, y=weekly_cases, col = as.factor(sim))) +
-#  ggplot2::geom_line(show.legend = FALSE, alpha=0.7) +
-#  ggplot2::scale_y_continuous()
-
-#ringbp::extinct_prob(res,cap_cases = cap_cases)
-#res[, sum(frac1*weekly_cases , na.rm = TRUE)]/n.sim/fracApp
-
 plotDt = sweepRes[, list(meanAppInfected = sum(frac1*weekly_cases/fracApp/n.sim , na.rm = TRUE)), by=list(fracApp, mixing)]
 
+# Some of the curves when the population is completely mixed
+ggplot(sweepRes[mixing == 0.5], aes(x = week, y = weekly_cases*frac1/fracApp, colour = as.factor(fracApp), style = mixing, group = paste(fracApp, mixing, sim))) + geom_line(alpha = 0.22,  show.legend = TRUE)
 
-ggplot(plotDt, aes(x = fracApp, y = mixing, z = meanAppInfected)) + stat_summary_2d()
+
+# relative risk to an app user as a function of how many app users there are and how mixed they are with non app users
+ggplot(plotDt, aes(x = fracApp, y = mixing, z = (meanAppInfected))) + stat_summary_2d(bins = c(10,5))
 ```
 

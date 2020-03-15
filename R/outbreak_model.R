@@ -42,7 +42,7 @@ outbreak_model <- function(num.initial.cases = NULL, prop.ascertain = NULL,
                            k = NULL, delay_shape = NULL,
                            delay_scale = NULL, prop.asym = NULL,
                            quarantine = NULL, fracApp = NULL,
-                           mixing = NULL) {
+                           mixing = NULL, appAcc = NULL, genAcc = NULL) {
 
   fracContactsWithApp = 1.0 - mixing*(1-fracApp) #(fracApp - homogenous, 1.0 - separated)
 
@@ -50,9 +50,9 @@ outbreak_model <- function(num.initial.cases = NULL, prop.ascertain = NULL,
   flow = rbind(c(fracContactsWithApp , 1 - fracContactsWithApp),
                c((1 - fracContactsWithApp)*fracApp/(1-fracApp), 1 - (1 - fracContactsWithApp)*fracApp/(1-fracApp)))
 
-  appAcc = 0.9
-  genAcc = 0.5
-  traceAcc = rbind(c(appAcc, genAcc), c(genAcc,genAcc)) # probability of tracing transmission from person in group i to person in group j = trace[i,j]
+
+  traceAcc = rbind(c(appAcc, genAcc),
+                   c(genAcc,genAcc)) # probability of tracing transmission from person in group i to person in group j = trace[i,j]
 
 
 
