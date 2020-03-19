@@ -3,6 +3,9 @@ Repo forked from: https://github.com/cmmid/ringbp
 
 The original model has been modified to support two sub-populations with different contact tracing accuracy.
 
+It is assumed that there is some degree of transmission between these subpopulations, and the connectivity is parameterized by a ‘mixing’ coefficient. For mixing = 0 the subpopulations are completely separate, and for mixing = 1 the populations are completely homogeneous. Linkage rates for intermediate mixing values vary linearly. It is assumed that if both individuals are app users the transmission has a 90% chance of detection, while if at least one individual does not have the app there is a 50% chance of detection. The 50% is meant to approximate a scenario where public health offices are too overwhelmed to do contact tracing, but individuals can contact family members and friends. 
+
+
 
 # Feasibility of controlling 2019-nCoV outbreaks by isolation of cases and contacts
 
