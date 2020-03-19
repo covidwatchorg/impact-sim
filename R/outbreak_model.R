@@ -35,6 +35,13 @@
 #'                            k = 1.95,
 #'                            quarantine = FALSE)
 #'}
+#'
+#'
+
+source("R/outbreak_step.R")
+source("R/outbreak_setup.R")
+source("R/aux_functions.R")
+
 outbreak_model <- function(num.initial.cases = NULL, prop.ascertain = NULL,
                            cap_max_days = NULL, cap_cases = NULL,
                            r0isolated = NULL, r0community = NULL,

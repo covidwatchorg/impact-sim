@@ -1,11 +1,13 @@
-library(ringbp)
+#library(ringbp)
+source("R/scenario_sim.R")
+
 library(data.table)
 library(plyr)
 
 cap_cases = 50000
 
 
-n.sim = 20
+n.sim = 2
 
 fracApp = c(0.01,0.1, 0.2,0.3, 0.4,0.5, 0.6,0.7, 0.8, 0.9, 0.99) # fraction of the population using the app
 mixing = seq(0.0,1.0, length.out = 5) # how well mixed the app group is with the non-app group (0 = separate, 1 = homegenous)
@@ -40,4 +42,4 @@ genAcc = genAcc)
 })
 
 sweepRes[,cases_per_gen := NULL]
-write.csv(sweepRes, "simResults.csv", row.names = FALSE, append = TRUE)
+write.table(sweepRes, "simResults.csv", append = TRUE, sep = ",", row.names = FALSE)

@@ -6,7 +6,7 @@ output: html_notebook
 
 
 ```{r}
-library(ringbp)
+#library(ringbp)
 library(ggplot2)
 library(data.table)
 library(plyr)

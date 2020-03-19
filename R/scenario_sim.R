@@ -34,6 +34,7 @@
 #' prop.ascertain = 0)
 #' #' }
 #'
+source("R/outbreak_model.R")
 
 scenario_sim <- function(n.sim = NULL, prop.ascertain = NULL, cap_max_days = NULL, cap_cases = NULL,
                          r0isolated = NULL, r0community = NULL, disp.iso = NULL, disp.com = NULL, k = NULL,
