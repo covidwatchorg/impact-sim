@@ -12,7 +12,9 @@ library(data.table)
 library(plyr)
 
 
+setwd("/Users/jpetrie/Desktop/Covid/adoptionAnalysis/impact-sim")
 simRes = fread("simResults.csv" )
+
   
 plotDt = simRes[, list(meanInfected = sum(weekly_cases/n.sim , na.rm = TRUE), meanAppInfected = sum(frac1*weekly_cases/fracApp/n.sim , na.rm = TRUE),
                          meanR0 = sum(effective_r0*weekly_cases)/sum(weekly_cases)), by=list(fracApp, mixing)]
@@ -34,5 +36,7 @@ plotDt = simRes[, list(meanInfected = sum(weekly_cases/n.sim , na.rm = TRUE), me
 
 
 ggplot(plotDt, aes(x = fracApp, y = meanInfected, colour = as.factor(mixing), group = as.factor(mixing))) + geom_line()
+
+ggplot(plotDt, aes(x = fracApp, y = meanAppInfected, colour = as.factor(mixing), group = as.factor(mixing))) + geom_line()
 ```
 
