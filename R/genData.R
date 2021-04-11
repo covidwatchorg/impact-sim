@@ -1,5 +1,4 @@
 #library(ringbp)
-setwd("/Users/jpetrie/Desktop/Covid/adoptionAnalysis/impact-sim")
 source("R/scenario_sim.R")
 
 library(data.table)

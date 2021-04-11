@@ -12,7 +12,6 @@ library(data.table)
 library(plyr)
 
 
-setwd("/Users/jpetrie/Desktop/Covid/adoptionAnalysis/impact-sim")
 simRes = fread("simResults.csv" )
 
   
